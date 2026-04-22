@@ -587,9 +587,9 @@
     <!-- API KEY -->
     <div class="api-section">
       <div class="panel-title">Claude API Key</div>
-      <p class="api-note">Your key is stored in browser memory only and never saved. Get yours at console.anthropic.com</p>
+      <p class="api-note">Your key is stored in browser memory only and never saved. Get yours at platform.openai.com</p>
       <div class="api-input-row">
-        <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off">
+        <input type="password" id="apiKey" placeholder="sk-proj-..." autocomplete="off">
         <button class="btn-connect" onclick="connectAPI()">Connect</button>
       </div>
     </div>
@@ -777,8 +777,8 @@ let generationHistory = [];
 
 function connectAPI() {
   const key = document.getElementById('apiKey').value.trim();
-  if (!key || !key.startsWith('sk-ant-')) {
-    showError('Please enter a valid Claude API key starting with sk-ant-');
+  if (!key || !key.startsWith('sk-')) {
+    showError('Please enter a valid OpenAI API key starting with sk-proj-');
     return;
   }
   apiKeyValue = key;
@@ -818,19 +818,19 @@ Brief: ${brief}
 Generate the LinkedIn caption, Instagram caption, and two visual prompts following all brand and policy rules exactly.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKeyValue,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Authorization': 'Bearer ' + apiKeyValue
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'gpt-4o',
         max_tokens: 1500,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userMessage }]
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userMessage }
+        ]
       })
     });
 
@@ -840,7 +840,7 @@ Generate the LinkedIn caption, Instagram caption, and two visual prompts followi
     }
 
     const data = await response.json();
-    const text = data.content[0].text;
+    const text = data.choices[0].message.content;
     renderOutput(text, brief);
     addToHistory(brief);
 
