@@ -818,7 +818,7 @@ Brief: ${brief}
 Generate the LinkedIn caption, Instagram caption, and two visual prompts following all brand and policy rules exactly.`;
 
   try {
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKeyValue}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyValue}`;
 
     const response = await fetch(geminiUrl, {
       method: 'POST',
