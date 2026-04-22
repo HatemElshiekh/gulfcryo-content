@@ -587,9 +587,9 @@
     <!-- API KEY -->
     <div class="api-section">
       <div class="panel-title">Claude API Key</div>
-      <p class="api-note">Your key is stored in browser memory only and never saved. Get yours at platform.openai.com</p>
+      <p class="api-note">Your key is stored in browser memory only and never saved. Get yours free at aistudio.google.com</p>
       <div class="api-input-row">
-        <input type="password" id="apiKey" placeholder="sk-proj-..." autocomplete="off">
+        <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off">
         <button class="btn-connect" onclick="connectAPI()">Connect</button>
       </div>
     </div>
@@ -777,8 +777,8 @@ let generationHistory = [];
 
 function connectAPI() {
   const key = document.getElementById('apiKey').value.trim();
-  if (!key || !key.startsWith('sk-')) {
-    showError('Please enter a valid OpenAI API key starting with sk-proj-');
+  if (!key || key.length < 10) {
+    showError('Please enter a valid Gemini API key from aistudio.google.com');
     return;
   }
   apiKeyValue = key;
@@ -818,19 +818,24 @@ Brief: ${brief}
 Generate the LinkedIn caption, Instagram caption, and two visual prompts following all brand and policy rules exactly.`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKeyValue}`;
+
+    const response = await fetch(geminiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKeyValue
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
-        max_tokens: 1500,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userMessage }
-        ]
+        system_instruction: {
+          parts: [{ text: SYSTEM_PROMPT }]
+        },
+        contents: [{
+          parts: [{ text: userMessage }]
+        }],
+        generationConfig: {
+          maxOutputTokens: 1500,
+          temperature: 0.7
+        }
       })
     });
 
@@ -840,7 +845,7 @@ Generate the LinkedIn caption, Instagram caption, and two visual prompts followi
     }
 
     const data = await response.json();
-    const text = data.choices[0].message.content;
+    const text = data.candidates[0].content.parts[0].text;
     renderOutput(text, brief);
     addToHistory(brief);
 
