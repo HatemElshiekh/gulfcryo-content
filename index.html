@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gulf Cryo | Content Generator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #365888;
+    --navy-dark: #2A4570;
+    --navy-light: #E8EEF6;
+    --grey: #909496;
+    --grey-light: #F5F5F5;
+    --grey-mid: #E0E0E0;
+    --white: #ffffff;
+    --black: #1A1A1A;
+    --success: #2D6A4F;
+    --error: #C00000;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --fs-xs: 12px;
+    --fs-sm: 13px;
+    --fs-base: 15px;
+    --fs-md: 16px;
+    --fs-lg: 18px;
+    --fs-xl: 22px;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--grey-mid);
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .logo-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--grey-mid);
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .logo-text .sub {
+    font-size: 12px;
+    color: var(--grey);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .api-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--grey);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--grey-mid);
+    transition: background 0.3s;
+  }
+
+  .status-dot.connected { background: var(--success); }
+  .status-dot.error { background: var(--error); }
+
+  /* MAIN LAYOUT */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    border-right: 1px solid var(--grey-mid);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    background: var(--white);
+  }
+
+  .panel-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 10px;
+  }
+
+  /* API KEY SECTION */
+  .api-section {
+    background: var(--grey-light);
+    border: 1px solid var(--grey-mid);
+    border-radius: 6px;
+    padding: 18px;
+  }
+
+  .api-section .panel-title { margin-bottom: 6px; }
+
+  .api-note {
+    font-size: 13px;
+    color: var(--grey);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .api-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  input[type="password"],
+  input[type="text"],
+  textarea,
+  select {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 15px;
+    color: var(--black);
+    background: var(--white);
+    border: 1px solid var(--grey-mid);
+    border-radius: 4px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--navy);
+  }
+
+  .api-input-row input { flex: 1; font-size: 14px; }
+
+  .btn-connect {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    font-family: var(--font);
+  }
+
+  .btn-connect:hover { background: var(--navy-dark); }
+
+  /* FORM SECTION */
+  .form-section { display: flex; flex-direction: column; gap: 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23909496' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  .field-hint {
+    font-size: 13px;
+    color: var(--grey);
+    line-height: 1.5;
+  }
+
+  /* GENERATE BUTTON */
+  .btn-generate {
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .btn-generate:hover:not(:disabled) { background: var(--navy-dark); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-generate.loading .spinner { display: block; }
+  .btn-generate.loading .btn-label { opacity: 0.7; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* POLICY BADGES */
+  .policy-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--navy);
+    background: var(--navy-light);
+    border: 1px solid rgba(54,88,136,0.15);
+    border-radius: 3px;
+    padding: 4px 8px;
+  }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    padding: 32px 40px;
+    background: var(--white);
+    overflow-y: auto;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .output-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .output-header p {
+    font-size: 14px;
+    color: var(--grey);
+    margin-top: 4px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 200px);
+    text-align: center;
+    gap: 12px;
+    opacity: 0.4;
+  }
+
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--grey-mid);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .empty-state h3 { font-size: 18px; color: var(--black); font-weight: 600; }
+  .empty-state p { font-size: 15px; color: var(--grey); max-width: 300px; line-height: 1.6; }
+
+  /* OUTPUT CARDS */
+  .output-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .output-card {
+    border: 1px solid var(--grey-mid);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--grey-light);
+    border-bottom: 1px solid var(--grey-mid);
+  }
+
+  .card-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .icon-linkedin { background: #0A66C2; color: white; }
+  .icon-instagram { background: linear-gradient(135deg, #E1306C, #C13584, #833AB4); color: white; }
+  .icon-visual { background: var(--navy); color: white; }
+
+  .card-label span {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 0.3px;
+  }
+
+  .card-meta {
+    font-size: 13px;
+    color: var(--grey);
+  }
+
+  .card-actions { display: flex; gap: 6px; }
+
+  .btn-action {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--grey-mid);
+    background: var(--white);
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn-action:hover { border-color: var(--navy); color: var(--navy); }
+
+  .btn-action.primary {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+
+  .btn-action.primary:hover { background: var(--navy-dark); }
+
+  .btn-action.copied {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+  }
+
+  .card-body {
+    padding: 18px;
+  }
+
+  .card-content {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--black);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .char-count {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--grey);
+  }
+
+  .char-count span { color: var(--navy); font-weight: 600; }
+
+  /* VISUAL PROMPT CARD */
+  .visual-card .card-body { background: #FAFBFD; }
+
+  .prompt-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #444;
+    font-style: italic;
+    padding: 14px;
+    background: var(--white);
+    border: 1px solid var(--grey-mid);
+    border-radius: 4px;
+    white-space: pre-wrap;
+  }
+
+  .visual-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+  }
+
+  .section-divider span {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--grey);
+    white-space: nowrap;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--grey-mid);
+  }
+
+  /* ERROR MESSAGE */
+  .error-msg {
+    background: #FFF5F5;
+    border: 1px solid #FFD0D0;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--error);
+    display: none;
+  }
+
+  .error-msg.visible { display: block; }
+
+  /* HISTORY */
+  .history-section { margin-top: 8px; }
+
+  .history-item {
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--grey);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-item:hover {
+    background: var(--navy-light);
+    color: var(--navy);
+    border-color: rgba(54,88,136,0.2);
+  }
+
+  /* FOOTER */
+  .left-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--grey-mid);
+    font-size: 12px;
+    color: var(--grey);
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+  }
+
+  /* ANIMATIONS */
+  .output-card {
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .output-card:nth-child(2) { animation-delay: 0.05s; }
+  .output-card:nth-child(3) { animation-delay: 0.1s; }
+  .output-card:nth-child(4) { animation-delay: 0.15s; }
+  .output-card:nth-child(5) { animation-delay: 0.2s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .left-panel { border-right: none; border-bottom: 1px solid var(--grey-mid); }
+    .right-panel { padding: 24px 20px; }
+    header { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmD863nGVNw7iaYMmXbPs3tg1I10F6vhUMFg&s" alt="Gulf Cryo" class="logo-img">
+    <div class="logo-divider"></div>
+    <div class="logo-text">
+      <span class="sub">Content Generator</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="api-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Not connected</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <!-- API KEY -->
+    <div class="api-section">
+      <div class="panel-title">Claude API Key</div>
+      <p class="api-note">Your key is stored in browser memory only and never saved. Get yours at console.anthropic.com</p>
+      <div class="api-input-row">
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off">
+        <button class="btn-connect" onclick="connectAPI()">Connect</button>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-section">
+
+      <div class="field">
+        <label for="pillar">Content Pillar</label>
+        <select id="pillar">
+          <option value="brand">01 — Brand and Storytelling</option>
+          <option value="education">02 — Education and Thought Leadership</option>
+          <option value="solutions">03 — Company and Solutions</option>
+          <option value="customer">04 — Customer and Partner Engagement</option>
+          <option value="celebrations">05 — Celebrations and Industry Engagement</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="contentType">Content Type</label>
+        <select id="contentType">
+          <option value="employee_spotlight">Employee Spotlight</option>
+          <option value="qhse_moment">QHSE Culture Moment</option>
+          <option value="leadership_voice">Leadership Voice</option>
+          <option value="behind_scenes">Behind the Scenes</option>
+          <option value="industry_explainer">Industry Explainer</option>
+          <option value="ccus_insight">CCUS and Sustainability</option>
+          <option value="solution_post">Solution Post</option>
+          <option value="network_reach">Network and Reach</option>
+          <option value="customer_story">Customer Story</option>
+          <option value="national_day">National Day or Occasion</option>
+          <option value="industry_milestone">Industry Event or Milestone</option>
+          <option value="thank_you">Thank You Post</option>
+          <option value="announcement">Announcement</option>
+          <option value="general">General Post</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="brief">Post Brief</label>
+        <textarea id="brief" placeholder="Describe the post in one or two lines. Be specific. Example: Thank you post for people across the region who kept working through the difficult days. Tone should be warm and restrained, not celebratory."></textarea>
+        <span class="field-hint">The more specific your brief, the stronger the output. Include any key facts, names, or context Gulf Cryo can claim.</span>
+      </div>
+
+      <div class="field">
+        <label>Policy Guardrails Active</label>
+        <div class="policy-badges">
+          <span class="badge">American English</span>
+          <span class="badge">SIVA Framework</span>
+          <span class="badge">No AI Fingerprint</span>
+          <span class="badge">Gulf Cryo Voice</span>
+          <span class="badge">Platform Rules</span>
+          <span class="badge">Hashtag Policy</span>
+        </div>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="btn-generate" id="generateBtn" onclick="generate()" disabled>
+        <div class="spinner" id="spinner"></div>
+        <span class="btn-label">Generate Content</span>
+      </button>
+
+    </div>
+
+    <!-- RECENT -->
+    <div class="history-section" id="historySection" style="display:none">
+      <div class="panel-title">Recent Briefs</div>
+      <div id="historyList"></div>
+    </div>
+
+    <div class="left-footer">
+      All outputs must be reviewed before publishing.<br>
+      QHSE content requires HSE team sign-off.<br>
+      Partner mentions require written approval.
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="output-header">
+      <div>
+        <h2>Generated Content</h2>
+        <p>LinkedIn, Instagram, and two visual prompts for ChatGPT Images</p>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+      <div class="empty-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#909496" stroke-width="1.5" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </div>
+      <h3>No content yet</h3>
+      <p>Connect your API key, fill in your brief, and click Generate Content to get started.</p>
+    </div>
+
+    <div id="outputGrid" class="output-grid" style="display:none"></div>
+
+  </div>
+</main>
+
+<script>
+const SYSTEM_PROMPT = `You are Gulf Cryo's official social media content generator. Gulf Cryo is a 70-year-old regional industrial gas company operating in 10 countries across the Middle East with over 1,500 employees and 25+ operating sites. They are the largest CO2 provider in the region and the first CCUS operator in the Middle East. Products include industrial gases, medical gases, specialty gases, hydrogen, dry ice, and carbon capture solutions. Sectors served include healthcare, oil and gas, food and beverage, manufacturing, petrochemicals, steel, and sustainability.
+
+BRAND VOICE - NON-NEGOTIABLE:
+Expert: Speak from 70+ years of authority. Confident, accurate, never boastful.
+Enabling: Every message frames what Gulf Cryo makes possible for industries, people, and the planet.
+Clear: Plain language. Jargon only when addressing technical professionals. No unnecessary complexity.
+Warm: Human, approachable, proud. Celebrate our people and our regional roots.
+Purposeful: Every post has a reason to exist. We do not fill space.
+Forward-Looking: Sustainability, decarbonization, and innovation are at our core.
+
+CONTENT PILLARS:
+01 Brand and Storytelling: Enabler narrative, people stories, safety culture, innovation labs, leadership voices, QHSE achievements.
+02 Education and Thought Leadership: Industry articles, speaking opportunities, sustainability insights, expert interviews, events coverage, news and trends, QHSE awareness.
+03 Company and Solutions: Industries served, products and services framed as solutions, distribution network, USPs and differentiators.
+04 Customer and Partner Engagement: Customer testimonials, case studies, partnership announcements, webinars and collabs, co-created content.
+05 Celebrations and Industry Engagement: National days across 10 countries, industry occasions, employee milestones, community involvement.
+
+SIVA FRAMEWORK - APPLY TO ALL CONTENT:
+Solution not Product: Frame everything around what problem Gulf Cryo solves.
+Information not Promotion: Educate the audience. Build authority.
+Value not Price: Communicate reliability, safety, innovation, expertise.
+Access not Place: Create clear touchpoints for the audience to connect.
+
+WRITING RULES - STRICT:
+- American English spelling always. Organization not organisation. Color not colour.
+- Sentence case for captions. Title Case for headlines only.
+- Maximum 20 words per sentence on social.
+- Active voice always.
+- Spell out numbers 1 to 9. Use numerals for 10 and above.
+- Write in first person plural: We, Our, At Gulf Cryo.
+- Lead every post with the benefit or insight, not the product.
+- No AI-generated fingerprint. No generic filler language. No phrases that could apply to any company.
+- Every post must contain at least one specific Gulf Cryo fact, number, country, product, or achievement.
+- No em dashes anywhere. Use commas or restructure the sentence.
+- No all-caps text. No excessive punctuation.
+- No vague sustainability claims. Use specific verified data only.
+- Never mock or reference competitors.
+- Avoid idle content. Every word must earn its place.
+
+PLATFORM RULES:
+LinkedIn: Maximum 320 characters for standard posts. Strong opening hook required. Lead with insight not company name. Hashtags: #GulfCryo only. No other hashtags on LinkedIn.
+Instagram: Maximum 250 characters. Punchy, visual, emotional. Hashtags: #GulfCryo plus maximum 2 relevant industry hashtags.
+
+EMOJIS: Maximum 2 per post. Only when appropriate. Never in formal announcements or safety content. Approved: checkmark and globe emoji when relevant.
+
+WHAT MUST NEVER APPEAR:
+- Generic stock image references
+- Off-brand colors or fonts in visual prompts
+- Content that could be interpreted as political
+- Unverified claims
+- Language that could apply to any industrial company
+- Posts without a clear Gulf Cryo-specific angle
+
+VISUAL PROMPT RULES:
+Gulf Cryo brand colors: Navy blue #365888, Black #000000, Grey #909496, White backgrounds.
+Typography reference: Barlow Condensed bold for headlines. Clean sans-serif for body.
+Mood: Professional, industrial, human, premium. Never generic. Never stock-looking.
+Always specify: No flags, no political imagery, no emergency or crisis imagery unless specifically requested and approved.
+Image style: Real operational environments, authentic people, Gulf Cryo facilities and context.
+When real photography is not available: specify high quality licensed photography with specific composition and mood guidance.
+
+OUTPUT FORMAT - YOU MUST FOLLOW THIS EXACTLY:
+
+LINKEDIN_CAPTION:
+[Write the LinkedIn caption here. 320 characters max. Strong hook. #GulfCryo only.]
+
+INSTAGRAM_CAPTION:
+[Write the Instagram caption here. 250 characters max. Punchy and human. #GulfCryo plus max 2 hashtags.]
+
+VISUAL_PROMPT_1:
+[Write a detailed, specific image generation prompt for ChatGPT DALL-E. Include: composition, lighting, color treatment, mood, what to include, what to avoid. Reference Gulf Cryo brand colors where relevant. Minimum 80 words.]
+
+VISUAL_PROMPT_2:
+[Write a second, distinctly different creative direction for the same post. Different composition, mood, or visual concept. Minimum 80 words.]
+
+Do not include any other text, headers, explanations, or commentary outside of these four sections. Output only the four labeled sections above.`;
+
+let apiKeyValue = '';
+let generationHistory = [];
+
+function connectAPI() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key || !key.startsWith('sk-ant-')) {
+    showError('Please enter a valid Claude API key starting with sk-ant-');
+    return;
+  }
+  apiKeyValue = key;
+  document.getElementById('statusDot').className = 'status-dot connected';
+  document.getElementById('statusText').textContent = 'Connected';
+  document.getElementById('generateBtn').disabled = false;
+  hideError();
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('visible');
+}
+
+async function generate() {
+  const brief = document.getElementById('brief').value.trim();
+  const pillar = document.getElementById('pillar').options[document.getElementById('pillar').selectedIndex].text;
+  const contentType = document.getElementById('contentType').options[document.getElementById('contentType').selectedIndex].text;
+
+  if (!brief) { showError('Please enter a post brief.'); return; }
+  if (!apiKeyValue) { showError('Please connect your API key first.'); return; }
+
+  hideError();
+  const btn = document.getElementById('generateBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const userMessage = `Content Pillar: ${pillar}
+Content Type: ${contentType}
+Brief: ${brief}
+
+Generate the LinkedIn caption, Instagram caption, and two visual prompts following all brand and policy rules exactly.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKeyValue,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API request failed');
+    }
+
+    const data = await response.json();
+    const text = data.content[0].text;
+    renderOutput(text, brief);
+    addToHistory(brief);
+
+  } catch (err) {
+    showError('Generation failed: ' + err.message);
+    document.getElementById('statusDot').className = 'status-dot error';
+    document.getElementById('statusText').textContent = 'Error';
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function parseOutput(text) {
+  const sections = {
+    linkedin: '',
+    instagram: '',
+    visual1: '',
+    visual2: ''
+  };
+
+  const liMatch = text.match(/LINKEDIN_CAPTION:\s*([\s\S]*?)(?=INSTAGRAM_CAPTION:|$)/i);
+  const igMatch = text.match(/INSTAGRAM_CAPTION:\s*([\s\S]*?)(?=VISUAL_PROMPT_1:|$)/i);
+  const v1Match = text.match(/VISUAL_PROMPT_1:\s*([\s\S]*?)(?=VISUAL_PROMPT_2:|$)/i);
+  const v2Match = text.match(/VISUAL_PROMPT_2:\s*([\s\S]*?)$/i);
+
+  if (liMatch) sections.linkedin = liMatch[1].trim();
+  if (igMatch) sections.instagram = igMatch[1].trim();
+  if (v1Match) sections.visual1 = v1Match[1].trim();
+  if (v2Match) sections.visual2 = v2Match[1].trim();
+
+  return sections;
+}
+
+function renderOutput(text, brief) {
+  const sections = parseOutput(text);
+  const grid = document.getElementById('outputGrid');
+  const empty = document.getElementById('emptyState');
+
+  empty.style.display = 'none';
+  grid.style.display = 'flex';
+
+  grid.innerHTML = `
+    <div class="output-card">
+      <div class="card-header">
+        <div class="card-label">
+          <div class="card-icon icon-linkedin">in</div>
+          <span>LinkedIn Caption</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-action" onclick="copyText(this, 'li-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-content" id="li-content">${escapeHtml(sections.linkedin)}</div>
+        <div class="char-count">Characters: <span>${sections.linkedin.length}</span> / 320</div>
+      </div>
+    </div>
+
+    <div class="output-card">
+      <div class="card-header">
+        <div class="card-label">
+          <div class="card-icon icon-instagram">IG</div>
+          <span>Instagram Caption</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-action" onclick="copyText(this, 'ig-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-content" id="ig-content">${escapeHtml(sections.instagram)}</div>
+        <div class="char-count">Characters: <span>${sections.instagram.length}</span> / 250</div>
+      </div>
+    </div>
+
+    <div class="section-divider">
+      <div class="divider-line"></div>
+      <span>Visual Prompts for ChatGPT Images</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="output-card visual-card">
+      <div class="card-header">
+        <div class="card-label">
+          <div class="card-icon icon-visual">V1</div>
+          <span>Visual Direction 1</span>
+        </div>
+        <div class="card-meta">Primary concept</div>
+      </div>
+      <div class="card-body">
+        <div class="prompt-text" id="v1-content">${escapeHtml(sections.visual1)}</div>
+        <div class="visual-actions">
+          <button class="btn-action" onclick="copyText(this, 'v1-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy Prompt
+          </button>
+          <button class="btn-action primary" onclick="openChatGPT('v1-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open in ChatGPT Images
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="output-card visual-card">
+      <div class="card-header">
+        <div class="card-label">
+          <div class="card-icon icon-visual">V2</div>
+          <span>Visual Direction 2</span>
+        </div>
+        <div class="card-meta">Alternative concept</div>
+      </div>
+      <div class="card-body">
+        <div class="prompt-text" id="v2-content">${escapeHtml(sections.visual2)}</div>
+        <div class="visual-actions">
+          <button class="btn-action" onclick="copyText(this, 'v2-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy Prompt
+          </button>
+          <button class="btn-action primary" onclick="openChatGPT('v2-content')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open in ChatGPT Images
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function copyText(btn, elementId) {
+  const text = document.getElementById(elementId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg> Copied`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy${elementId.includes('v') ? ' Prompt' : ''}`;
+    }, 2000);
+  });
+}
+
+function openChatGPT(elementId) {
+  const prompt = document.getElementById(elementId).textContent;
+  const encoded = encodeURIComponent(prompt);
+  window.open(`https://chatgpt.com/images?q=${encoded}`, '_blank');
+}
+
+function addToHistory(brief) {
+  generationHistory.unshift(brief);
+  if (generationHistory.length > 5) generationHistory = generationHistory.slice(0, 5);
+
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  section.style.display = 'block';
+
+  list.innerHTML = generationHistory.map(b =>
+    `<div class="history-item" onclick="document.getElementById('brief').value='${b.replace(/'/g, "\\'")}'">${b}</div>`
+  ).join('');
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+document.getElementById('apiKey').addEventListener('keydown', e => {
+  if (e.key === 'Enter') connectAPI();
+});
+
+document.getElementById('brief').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+});
+</script>
+
+</body>
+</html>
